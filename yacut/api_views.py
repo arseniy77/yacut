@@ -15,13 +15,13 @@ def create_id():
         raise InvalidAPIUsage('Отсутствует тело запроса')
     if 'url' not in data:
         raise InvalidAPIUsage('\"url\" является обязательным полем!')
-    if 'custom_id' in data:
+    if 'custom_id' in data and data['custom_id'] != None:
         custom_id = data['custom_id']
         if URL_map.query.filter_by(short=custom_id).first() is not None:
             raise InvalidAPIUsage(f'Имя \"{custom_id}\" уже занято.')
         if not re.match(r'^[\da-zA-Z]{1,16}$|^$', custom_id):
             raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки', 400)
-    if 'custom_id' not in data or data.get('custom_id') == '':
+    if data.get('custom_id') is None or data.get('custom_id') == '':
         data['custom_id'] = get_unique_short_id()
     map = URL_map()
     map.from_dict(data)
