@@ -12,17 +12,19 @@ class URL_map(db.Model):
     # Вот он — новый метод:
     def to_dict(self):
         return dict(
-            id=self.id,
-            original=self.original,
-            short=self.short,
-            timestamp=self.timestamp
+            url=self.original,
+            custom_id=self.short
         )
 
     def from_dict(self, data):
         # Для каждого поля модели, которое можно заполнить...
-        for field in ['original', 'short', 'timestamp']:
-            # ...выполняется проверка: есть ли ключ с таким же именем в словаре
-            if field in data:
-                # Если есть — добавляем значение из словаря
-                # в соответствующее поле объекта модели:
-                setattr(self, field, data[field])
+        # for field in ['url', 'custom_id']:
+        #     # ...выполняется проверка: есть ли ключ с таким же именем в словаре
+        #     if field in data:
+        #         # Если есть — добавляем значение из словаря
+        #         # в соответствующее поле объекта модели:
+        #         setattr(self, field, data[field])
+        if 'url' in data:
+            setattr(self, 'original', data['url'])
+        if 'custom_id' in data:
+            setattr(self, 'short', data['custom_id'])
