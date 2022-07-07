@@ -13,6 +13,6 @@ class UrlForm(FlaskForm):
         'Ваш вариант короткой ссылки',
         validators=[Length(1, 16, message='Длина не более 16 символов'),
                     Optional(),
-                    Regexp('^[\da-zA-Z]{1,16}$', message='Только цифры и буквы латинского алфавита!')]
+                    Regexp(r'^[\da-zA-Z]{1,16}$', message='Только цифры и буквы латинского алфавита!')]
     )
     submit = SubmitField('Создать')
