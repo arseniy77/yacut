@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from flask import url_for
+
 from yacut import db
 
 
@@ -13,7 +15,7 @@ class URL_map(db.Model):
     def to_dict(self):
         return dict(
             url=self.original,
-            custom_id=self.short
+            short_link=url_for('shortlink_map_view', short=self.short, _external=True)
         )
 
     def from_dict(self, data):
