@@ -1,14 +1,41 @@
-from flask import render_template
+from flask import abort, flash, redirect, render_template, url_for
 from strgen import StringGenerator
 
 from . import app, db
+from .forms import UrlForm
 from .models import URL_map
 
+
 def get_unique_short_id():
-    return StringGenerator(r'[\da-zA-Z]{6}').render()
+    for _ in range(5000):
+        id = StringGenerator(r'[\da-zA-Z]{6}').render()
+        if not URL_map.query.filter_by(short=id).first():
+            return id
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index_view():
-    link = ''
-    return render_template('index.html')
+    form = UrlForm()
+    if form.validate_on_submit():
+        short = form.custom_id.data
+        if URL_map.query.filter_by(short=short).first():
+            flash(f'Имя {short} уже занято!')
+            return render_template('mapper.html', form=form)
+        if short == '':
+            short = get_unique_short_id()
+        map = URL_map(
+            original=form.original_link.data,
+            short=short,
+        )
+        db.session.add(map)
+        db.session.commit()
+        return render_template('mapper.html', map=map, form=form)
+    return render_template('mapper.html', form=form)
+
+
+@app.route('/<short>')
+def shortlink_map_view(short):
+    mapped_link = URL_map.query.filter_by(short=short).first()
+    if mapped_link:
+        return redirect(mapped_link.original)
+    abort(404)
