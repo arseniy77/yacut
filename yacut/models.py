@@ -5,16 +5,20 @@ from strgen import StringGenerator
 
 from yacut import db
 
+from . import CONSTANTS
+
 
 class URL_map(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    original = db.Column(db.String(4096), nullable=False)
+    original = db.Column(
+        db.String(CONSTANTS.ORIGINAL_URL_MAXLENGTH), nullable=False)
     short = db.Column(
-        db.String(16),
+        db.String(CONSTANTS.USER_SHORTLINK_MAX_LENGTH),
         unique=True,
         nullable=False,
         index=True,
-        default=StringGenerator(r'[\da-zA-Z]{6}').render()
+        default=StringGenerator(
+            CONSTANTS.RANDOM_SHORTLINK_REGEXP).render()
     )
     timestamp = db.Column(
         db.DateTime, index=True, default=datetime.utcnow)

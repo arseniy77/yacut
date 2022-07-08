@@ -3,6 +3,7 @@ import re
 from flask import jsonify, request
 
 from . import app, db
+from .CONSTANTS import SHORTLINK_REGEXP
 from .error_handlers import InvalidAPIUsageError
 from .models import URL_map
 from .views import get_unique_short_id
@@ -19,7 +20,7 @@ def create_id():
         custom_id = data['custom_id']
         if URL_map.query.filter_by(short=custom_id).first() is not None:
             raise InvalidAPIUsageError(f'Имя \"{custom_id}\" уже занято.')
-        if not re.match(r'^[\da-zA-Z]{1,16}$|^$', custom_id):
+        if not re.match(f'{SHORTLINK_REGEXP}|^$', custom_id):
             raise InvalidAPIUsageError(
                 'Указано недопустимое имя для короткой ссылки', 400)
     if data.get('custom_id') is None or data.get('custom_id') == '':

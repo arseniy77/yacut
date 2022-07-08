@@ -2,13 +2,14 @@ from flask import abort, flash, redirect, render_template
 from strgen import StringGenerator
 
 from . import app, db
+from .CONSTANTS import RANDOM_SHORTLINK_REGEXP
 from .forms import UrlForm
 from .models import URL_map
 
 
 def get_unique_short_id():
     for _ in range(5000):
-        id = StringGenerator(r'[\da-zA-Z]{6}').render()
+        id = StringGenerator(RANDOM_SHORTLINK_REGEXP).render()
         if not URL_map.query.filter_by(short=id).first():
             return id
 
