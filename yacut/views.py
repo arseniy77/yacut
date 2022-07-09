@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from flask import abort, flash, redirect, render_template
 from strgen import StringGenerator
 
@@ -39,4 +41,4 @@ def shortlink_map_view(short):
     mapped_link = URL_map.query.filter_by(short=short).first()
     if mapped_link:
         return redirect(mapped_link.original)
-    abort(404)
+    abort(HTTPStatus.NOT_FOUND)
